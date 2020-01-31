@@ -83,7 +83,7 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
     """Leave the rxEdit-Mode"""
     bl_idname = "rxedit.finish"
     bl_label = "Leave the rxEdit-Mode"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):       
         Helper.Update(context)
