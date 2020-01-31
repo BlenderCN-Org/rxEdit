@@ -1,14 +1,32 @@
 import bpy
+import json
+from mathutils import *
+from math import *
+from enum import Enum
+
+class bMode(Enum):
+    OBJECT = 0,
+    JSON = 1
 
 class bObject:
     
-    def __init__(self, obj, context, ignoreScaling = True):
-        self.dataname = obj.data.name
-        self.location = obj.location.copy()
-        self.rotation = obj.rotation_euler.copy()
-        self.scale = obj.scale.copy()
-        self.ignoreScale = ignoreScaling
-        self.customhidden = False
+    def __init__(self, obj, context, ignoreScaling = True, mode = bMode.OBJECT):
+        if mode == bMode.OBJECT: #obj is probably a blender object
+            self.dataname = obj.data.name
+            self.location = obj.location.copy()
+            self.rotation = obj.rotation_euler.copy()
+            self.scale = obj.scale.copy()
+            self.ignoreScale = ignoreScaling
+            self.customhidden = False
+        else: # obj is probably a json string
+            obj = json.loads(obj)
+            self.dataname = obj["dataname"]
+            self.location = self.JsonVector(Vector(), obj["location"])
+            self.rotation = self.JsonVector(Euler(), obj["rotation"])
+            self.scale = self.JsonVector(Vector(), obj["scale"])
+            self.ignoreScale = obj["ignoreScale"]
+            self.customhidden = obj["customhidden"]
+
 
         self.context = context
 
@@ -54,3 +72,27 @@ class bObject:
 
     def EqualsSameType(self, obj):
         return self.dataname == obj.dataname
+
+    def VectorJson(self, vector):
+        data = {"x": vector.x,
+                "y": vector.y,
+                "z": vector.z}
+        return data
+
+    def JsonVector(self, vector, json):
+        vector.x = json["x"]
+        vector.y = json["y"]
+        vector.z = json["z"]
+        return vector
+
+    def ToJson(self):
+
+        data = {"dataname": self.dataname,
+                "location": self.VectorJson(self.location),
+                "rotation": self.VectorJson(self.rotation),
+                "scale": self.VectorJson(self.scale),
+                "ignoreScale": self.ignoreScale,
+                "customhidden": self.customhidden}
+
+        return json.dumps(data)
+
