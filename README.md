@@ -1,5 +1,5 @@
 # rxEdit
- A Blender addon which makes editing of transformed object easier.
+ A Blender addon which makes editing of transformed objects easier.
  Video example follows at some point maybe
  
  
