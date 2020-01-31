@@ -2,7 +2,7 @@ bl_info = {
     "name": "rxEdit",
     "description": "Easier editing of objects which are transformed.",
     "author": "rxc0",
-    "version": (0, 4, 1),
+    "version": (0, 4, 5),
     "blender": (2, 80, 0),
     "category": "Object"
 }
