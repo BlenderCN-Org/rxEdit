@@ -1,4 +1,6 @@
 import bpy
+import bpy
+from bpy.types import Operator
 
 from mathutils import *
 from math import *
@@ -40,7 +42,23 @@ class Helper:
                 bpy.ops.view3d.view_selected(ctx)
         bpy.ops.view3d.view_selected(ctx)
 
-class BEGIN_OT_rxEdit(bpy.types.Operator):
+class TOGGLE_OT_rxEdit(Operator):
+    """Toggle rxEdit-Mode"""      
+    bl_idname = "rxedit.toggle"        
+    bl_label = "Toggle rxEdit-Mode"         
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):     
+        Helper.Update(context)
+        global ENABLED
+        if ENABLED:
+            bpy.ops.rxedit.finish('EXEC_DEFAULT')
+        else:
+            bpy.ops.rxedit.enable('EXEC_DEFAULT')
+        return {'FINISHED'}
+
+
+class BEGIN_OT_rxEdit(Operator):
     """Enter the rxEdit-Mode"""      
     bl_idname = "rxedit.enable"        
     bl_label = "Enter the rxEdit-Mode"         
@@ -77,9 +95,7 @@ class BEGIN_OT_rxEdit(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
-
-class FINISH_OT_rxEdit(bpy.types.Operator):
+class FINISH_OT_rxEdit(Operator):
     """Leave the rxEdit-Mode"""
     bl_idname = "rxedit.finish"
     bl_label = "Leave the rxEdit-Mode"
@@ -130,9 +146,11 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
         return {'FINISHED'}
         
 def register():
+    bpy.utils.register_class(TOGGLE_OT_rxEdit)
     bpy.utils.register_class(BEGIN_OT_rxEdit)
     bpy.utils.register_class(FINISH_OT_rxEdit)
 
 def unregister():
+    bpy.utils.unregister_class(TOGGLE_OT_rxEdit)
     bpy.utils.unregister_class(BEGIN_OT_rxEdit)
     bpy.utils.unregister_class(FINISH_OT_rxEdit)

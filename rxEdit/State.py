@@ -1,4 +1,5 @@
 import bpy
+from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, PointerProperty
 
 import json
@@ -46,15 +47,16 @@ class State():
     def load(self, context):
         self.enabled = context.scene.rxedit.enabled
 
+        scene = context.scene
         self.cursor_location = Vector()
-        self.cursor_location.x = context.scene.rxedit.cursor_location[0]
-        self.cursor_location.y = context.scene.rxedit.cursor_location[1]
-        self.cursor_location.z = context.scene.rxedit.cursor_location[2]
+        self.cursor_location.x = scene.rxedit.cursor_location[0]
+        self.cursor_location.y = scene.rxedit.cursor_location[1]
+        self.cursor_location.z = scene.rxedit.cursor_location[2]
 
-        self.main = bObject(context.scene.rxedit.main, context, mode=bMode.JSON)
+        self.main = bObject(scene.rxedit.main, context, mode=bMode.JSON)
 
         self.objects = []
-        obj_json = json.loads(context.scene.rxedit.objects)
+        obj_json = json.loads(scene.rxedit.objects)
         for obj in obj_json:
             objj = json.loads(obj)
             try:
@@ -64,12 +66,20 @@ class State():
                 pass
 
 
-        
 
 
-
-class rxState(bpy.types.PropertyGroup):
+class rxState(PropertyGroup):
     """rxEdit Settings"""   
+    visiblechildren: BoolProperty(
+        name="Visible Children",
+        description="Keeps the children of the chosen object visible",
+        default=True
+        )
+    wireframe: BoolProperty(
+        name="Use Wireframe",
+        description="Show a wireframe in the rxEdit mode",
+        default=True
+        )
     enabled : BoolProperty(
         name="Enabled",
         default=False
