@@ -71,9 +71,6 @@ class bObject:
     def Equals(self, obj):
         return self.dataname == obj.data.name
 
-    def EqualsSameType(self, obj):
-        return self.dataname == obj.dataname
-
     def VectorJson(self, vector):
         data = {"x": vector.x,
                 "y": vector.y,

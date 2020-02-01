@@ -67,7 +67,7 @@ class BEGIN_OT_rxEdit(bpy.types.Operator):
         for o in context.view_layer.objects:
             obj = bObject(o, context)
             objcts.append(obj)
-            if not obj.EqualsSameType(main):
+            if not main.Equals(o) and not main.IsChild(o):
                 obj.Hide()
 
         Helper.ToggleView()
@@ -107,7 +107,7 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
                 new.parent = mainobj
         
         MAIN.Unset()
-        
+
         bpy.context.view_layer.update()
         for new in new_objects:
             if MAIN.IsChild(new):
