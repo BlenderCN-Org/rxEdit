@@ -4,6 +4,7 @@ bl_info = {
     "author": "rxc0",
     "version": (0, 4, 5),
     "blender": (2, 80, 0),
+    "tracker_url": "https://github.com/rxc0/rxEdit",
     "category": "Object"
 }
 
