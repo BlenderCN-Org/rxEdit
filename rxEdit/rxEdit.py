@@ -92,6 +92,8 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
         if not ENABLED:
             return {'FINISHED'}
             
+
+        #detecting new created objects
         global OBJECTS
         new_objects = context.view_layer.objects
         for o in OBJECTS:
@@ -100,7 +102,7 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
 
         global MAIN
 
-        viewobjects = bpy.data.objects
+        #parent them (see issue #4)
         mainobj = MAIN.Get()
         for new in new_objects:
             if new.parent is None:
@@ -108,6 +110,7 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
         
         MAIN.Unset()
 
+        #moving them with the object and unparenting them(see issue #4)
         bpy.context.view_layer.update()
         for new in new_objects:
             if MAIN.IsChild(new):
