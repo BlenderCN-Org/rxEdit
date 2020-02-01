@@ -92,17 +92,34 @@ class FINISH_OT_rxEdit(bpy.types.Operator):
         if not ENABLED:
             return {'FINISHED'}
             
-        MAIN.Unset()
-        #TODO: wireframe
-
-        #Save Cursorlocation and set it to world origin
-        global CURSOR_LOCATION
-        context.scene.cursor.location = CURSOR_LOCATION
-
         global OBJECTS
+        new_objects = context.view_layer.objects
         for o in OBJECTS:
             o.Unhide()
+            new_objects = [obj for obj in new_objects if obj.data.name != o.dataname]
+
+        global MAIN
+
+        viewobjects = bpy.data.objects
+        mainobj = MAIN.Get()
+        for new in new_objects:
+            if new.parent is None:
+                new.parent = mainobj
         
+        MAIN.Unset()
+        
+        bpy.context.view_layer.update()
+        for new in new_objects:
+            if MAIN.IsChild(new):
+                new_wm = new.matrix_world.copy() 
+                new.parent = None
+                new.matrix_world = new_wm
+
+        #TODO: wireframe
+
+        #Set the Cursorlocation back to where it was
+        global CURSOR_LOCATION
+        context.scene.cursor.location = CURSOR_LOCATION    
 
         global STATE
         STATE.clear(context)

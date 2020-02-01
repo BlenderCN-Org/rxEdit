@@ -11,6 +11,7 @@ class bMode(Enum):
 class bObject:
     
     def __init__(self, obj, context, ignoreScaling = True, mode = bMode.OBJECT):
+        self.context = context
         if mode == bMode.OBJECT: #obj is probably a blender object
             self.dataname = obj.data.name
             self.location = obj.location.copy()
