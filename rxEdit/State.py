@@ -15,7 +15,7 @@ from . import rxEdit
 class State():
 
     def __init__(self):
-        #predefine variables to dont get confused which exist and how they are named.
+        #predefine variables so i wont get confused which exist and how they are named.
         self.enabled = False
         self.cursor_location = None 
         self.main = None
@@ -85,7 +85,6 @@ class rxState(PropertyGroup):
                     o.Unhide()
                 else:
                     o.Hide()
-
 
     visiblechildren: BoolProperty(
         name="Visible Children",

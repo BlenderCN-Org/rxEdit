@@ -85,7 +85,7 @@ class BEGIN_OT_rxEdit(Operator):
         main.Set()
         
         #Create wireframe
-        wireframe = bpy.data.objects.new('rxWIREFRAME', context.object.data)
+        wireframe = bpy.data.objects.new('rxWIREFRAME', context.object.data.copy())
         wireframe.scale = context.object.scale.copy()
         wireframe.display_type = 'WIRE'
         wireframe.hide_select = True
@@ -103,7 +103,7 @@ class BEGIN_OT_rxEdit(Operator):
             objcts.append(obj)
             if context.scene.rxedit.visiblechildren and main.IsChild(o):
                 continue
-            if not main.Equals(o):
+            if not main.Equals(o) and not o == wireframe:
                 obj.Hide()
         if context.scene.rxedit.toggleview:
             Helper.ToggleView()
@@ -121,36 +121,28 @@ class FINISH_OT_rxEdit(Operator):
 
     def execute(self, context):       
         Helper.Update(context)
-        
+
+        global MAIN
         global ENABLED
+        global OBJECTS
+        global CURSOR_LOCATION
+        global STATE
+
+
         if not ENABLED:
             return {'FINISHED'}
             
 
         #detecting new created objects
-        global OBJECTS
+        
         new_objects = context.view_layer.objects
         for o in OBJECTS:
-            o.Unhide()
-            new_objects = [obj for obj in new_objects if obj.data.name != o.dataname]
-
-        global MAIN
-
-        #parent them (see issue #4)
-        mainobj = MAIN.Get()
-        for new in new_objects:
-            if new.parent is None:
-                new.parent = mainobj
-        
-        MAIN.Unset()
-
-        #moving them with the object and unparenting them(see issue #4)
-        bpy.context.view_layer.update()
-        for new in new_objects:
-            if MAIN.IsChild(new):
-                new_wm = new.matrix_world.copy() 
-                new.parent = None
-                new.matrix_world = new_wm
+            try:
+                o.Unhide()
+                new_objects = [obj for obj in new_objects if obj.data.name != o.dataname]
+            except :
+                pass #main object probably deleted
+            
 
         #Delete wireframe
         wireframe = context.scene.rxedit.wireframeobject
@@ -161,14 +153,32 @@ class FINISH_OT_rxEdit(Operator):
         bpy.ops.object.delete()
         context.scene.rxedit.wireframeobject = None
 
-        mainobj.select_set(True)
-
-        #Set the Cursorlocation back to where it was
-        global CURSOR_LOCATION
+        #Set the Cursorlocation back to where it was       
         context.scene.cursor.location = CURSOR_LOCATION    
-
-        global STATE
+        
         STATE.clear(context)
+
+
+        mainobj = MAIN.Get()
+        if mainobj == None:
+            self.report({'WARNING'}, "Main object got deleted!")
+            return {'FINISHED'}
+
+        for new in new_objects:
+            if new.parent is None:
+                new.parent = mainobj
+        
+        MAIN.Unset()
+        mainobj.select_set(True)
+        #moving them with the object and unparenting them(see issue #4)
+        bpy.context.view_layer.update()
+        for new in new_objects:
+            if MAIN.IsChild(new):
+                new_wm = new.matrix_world.copy() 
+                new.parent = None
+                new.matrix_world = new_wm
+
+
 
         return {'FINISHED'}
         
