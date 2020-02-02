@@ -12,15 +12,18 @@ bl_info = {
 
 import bpy
 from . import rxEdit
+from . import rxPanel
+from . import State
+
 from .rxEdit import BEGIN_OT_rxEdit, FINISH_OT_rxEdit
 
-from . import State
 
 addon_keymaps = []
 
 def register():
     rxEdit.register()
     State.register()
+    rxPanel.register()
 
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
@@ -31,6 +34,7 @@ def register():
 def unregister():
     rxEdit.unregister()
     State.unregister()
+    rxPanel.unregister()
 
     wm = bpy.context.window_manager
     for km in addon_keymaps:
