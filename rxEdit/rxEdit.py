@@ -86,6 +86,7 @@ class BEGIN_OT_rxEdit(Operator):
         
         #Create wireframe
         wireframe = bpy.data.objects.new('rxWIREFRAME', context.object.data)
+        wireframe.scale = context.object.scale.copy()
         wireframe.display_type = 'WIRE'
         wireframe.hide_select = True
         context.object.users_collection[0].objects.link(wireframe)
