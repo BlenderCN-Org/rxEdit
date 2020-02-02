@@ -1,4 +1,5 @@
 import bpy
+from bpy.types import PropertyGroup, Object
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, PointerProperty
 
 import json
@@ -7,6 +8,8 @@ from mathutils import *
 from math import *
 
 from .bObject import *
+
+from . import rxEdit
 
 
 class State():
@@ -46,15 +49,16 @@ class State():
     def load(self, context):
         self.enabled = context.scene.rxedit.enabled
 
+        scene = context.scene
         self.cursor_location = Vector()
-        self.cursor_location.x = context.scene.rxedit.cursor_location[0]
-        self.cursor_location.y = context.scene.rxedit.cursor_location[1]
-        self.cursor_location.z = context.scene.rxedit.cursor_location[2]
+        self.cursor_location.x = scene.rxedit.cursor_location[0]
+        self.cursor_location.y = scene.rxedit.cursor_location[1]
+        self.cursor_location.z = scene.rxedit.cursor_location[2]
 
-        self.main = bObject(context.scene.rxedit.main, context, mode=bMode.JSON)
+        self.main = bObject(scene.rxedit.main, context, mode=bMode.JSON)
 
         self.objects = []
-        obj_json = json.loads(context.scene.rxedit.objects)
+        obj_json = json.loads(scene.rxedit.objects)
         for obj in obj_json:
             objj = json.loads(obj)
             try:
@@ -64,12 +68,46 @@ class State():
                 pass
 
 
-        
 
 
-
-class rxState(bpy.types.PropertyGroup):
+class rxState(PropertyGroup):
     """rxEdit Settings"""   
+
+    def update_wireframe(self, context):
+        rxEdit.Helper.UpdateWireframeVisibility(context)
+
+    def update_children(self, context):
+        rxEdit.Helper.Update(context)
+        main = rxEdit.MAIN
+        for o in rxEdit.OBJECTS:
+            if main.IsChild(o.Get()):
+                if context.scene.rxedit.visiblechildren:
+                    o.Unhide()
+                else:
+                    o.Hide()
+
+
+    visiblechildren: BoolProperty(
+        name="Visible Children",
+        description="Keeps the children of the chosen object visible",
+        default=True,
+        update=update_children
+        )
+    wireframe: BoolProperty(
+        name="Use Wireframe",
+        description="Show a wireframe in the rxEdit mode",
+        default=True,
+        update=update_wireframe
+        )
+    wireframeobject : PointerProperty(
+        name="Wireframe",
+        type=Object
+        )
+    toggleview: BoolProperty(
+        name="View Selected",
+        description="View the selected object when entering mode",
+        default=True
+        )
     enabled : BoolProperty(
         name="Enabled",
         default=False
@@ -86,6 +124,8 @@ class rxState(bpy.types.PropertyGroup):
         name="List of Objects in the Scene",
         description="Objects"
         )
+
+
     
 def register():
     bpy.utils.register_class(rxState)
