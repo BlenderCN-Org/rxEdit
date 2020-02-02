@@ -22,6 +22,8 @@ class OPTIONS_PT_rxEdit(Panel):
         layout.separator()
         row = layout.row()
         row.operator(operator="rxedit.toggle", text="Toggle rxEdit-Mode")
+
+        
 def register():
     bpy.utils.register_class(OPTIONS_PT_rxEdit)
 

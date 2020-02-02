@@ -124,3 +124,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 *.zip
+rxEdit/$AddonBuild.exe
+rxEdit/$build.cfg

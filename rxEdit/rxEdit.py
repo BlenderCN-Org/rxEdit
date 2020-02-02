@@ -43,6 +43,7 @@ class Helper:
         bpy.ops.view3d.view_selected(ctx)
 
     def UpdateWireframeVisibility(context):
+        Helper.Update(context)
         global ENABLED
         if not ENABLED:
             return

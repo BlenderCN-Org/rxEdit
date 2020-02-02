@@ -15,8 +15,6 @@ from . import rxEdit
 from . import rxPanel
 from . import State
 
-from .rxEdit import BEGIN_OT_rxEdit, FINISH_OT_rxEdit
-
 
 addon_keymaps = []
 
