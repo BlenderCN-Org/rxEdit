@@ -12,14 +12,16 @@ class OPTIONS_PT_rxEdit(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         row = layout.row()
-        #col = row.column()
-        row.operator(operator="rxedit.toggle", text="Toggle rxEdit-Mode")
+        col = row.column()  
+        col.label(text="Options")
+        row.prop(context.scene.rxedit, "toggleview", icon='HIDE_OFF',icon_only=True)
+        row.prop(context.scene.rxedit, "visiblechildren", icon='MONKEY',icon_only=True)
+        row.prop(context.scene.rxedit, "wireframe", icon='MOD_WIREFRAME', icon_only=True)
+
         layout.separator()
         row = layout.row()
-        row.prop(context.scene.rxedit, "visiblechildren", icon='CON_CHILDOF')
-        row.prop(context.scene.rxedit, "wireframe", icon='MOD_WIREFRAME', icon_only=True)
+        row.operator(operator="rxedit.toggle", text="Toggle rxEdit-Mode")
 def register():
     bpy.utils.register_class(OPTIONS_PT_rxEdit)
 

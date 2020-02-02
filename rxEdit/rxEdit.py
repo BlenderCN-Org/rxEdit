@@ -42,6 +42,14 @@ class Helper:
                 bpy.ops.view3d.view_selected(ctx)
         bpy.ops.view3d.view_selected(ctx)
 
+    def UpdateWireframeVisibility(context):
+        global ENABLED
+        if not ENABLED:
+            return
+        wireframe = context.scene.rxedit.wireframeobject
+        wireframe.hide_viewport = not context.scene.rxedit.wireframe
+
+
 class TOGGLE_OT_rxEdit(Operator):
     """Toggle rxEdit-Mode"""      
     bl_idname = "rxedit.toggle"        
@@ -69,13 +77,19 @@ class BEGIN_OT_rxEdit(Operator):
 
         global ENABLED
         if ENABLED:
-            self.report({'INFO'}, "Already in rxEdit mode!")
+            self.report({'WARNING'}, "Already in rxEdit mode!")
             return {'FINISHED'}
 
-        main = bObject(context.selected_objects[0], context)
+        main = bObject(context.object, context)
         main.Set()
         
-        #TODO: wireframe
+        #Create wireframe
+        wireframe = bpy.data.objects.new('rxWIREFRAME', context.object.data)
+        wireframe.display_type = 'WIRE'
+        wireframe.hide_select = True
+        context.object.users_collection[0].objects.link(wireframe)
+        context.scene.rxedit.wireframeobject = wireframe
+        Helper.UpdateWireframeVisibility(context)
 
         #Save Cursor's location and set it to world origin
         cursor_location = context.scene.cursor.location.copy()
@@ -85,10 +99,12 @@ class BEGIN_OT_rxEdit(Operator):
         for o in context.view_layer.objects:
             obj = bObject(o, context)
             objcts.append(obj)
-            if not main.Equals(o) and not main.IsChild(o):
+            if context.scene.rxedit.visiblechildren and main.IsChild(o):
+                continue
+            if not main.Equals(o):
                 obj.Hide()
-
-        Helper.ToggleView()
+        if context.scene.rxedit.toggleview:
+            Helper.ToggleView()
        
         global STATE
         STATE.save(True, cursor_location, main, objcts, context)
@@ -134,7 +150,15 @@ class FINISH_OT_rxEdit(Operator):
                 new.parent = None
                 new.matrix_world = new_wm
 
-        #TODO: wireframe
+        #Delete wireframe
+        wireframe = context.scene.rxedit.wireframeobject
+        bpy.ops.object.select_all(action='DESELECT')
+        wireframe.hide_select = False
+        wireframe.select_set(True)
+        bpy.ops.object.delete()
+        context.scene.rxedit.wireframeobject = None
+
+        mainobj.select_set(True)
 
         #Set the Cursorlocation back to where it was
         global CURSOR_LOCATION

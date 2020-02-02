@@ -1,5 +1,5 @@
 import bpy
-from bpy.types import PropertyGroup
+from bpy.types import PropertyGroup, Object
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, PointerProperty
 
 import json
@@ -8,6 +8,8 @@ from mathutils import *
 from math import *
 
 from .bObject import *
+
+from . import rxEdit
 
 
 class State():
@@ -70,14 +72,40 @@ class State():
 
 class rxState(PropertyGroup):
     """rxEdit Settings"""   
+
+    def update_wireframe(self, context):
+        rxEdit.Helper.UpdateWireframeVisibility(context)
+
+    def update_children(self, context):
+        rxEdit.Helper.Update(context)
+        main = rxEdit.MAIN
+        for o in rxEdit.OBJECTS:
+            if main.IsChild(o.Get()):
+                if context.scene.rxedit.visiblechildren:
+                    o.Unhide()
+                else:
+                    o.Hide()
+
+
     visiblechildren: BoolProperty(
         name="Visible Children",
         description="Keeps the children of the chosen object visible",
-        default=True
+        default=True,
+        update=update_children
         )
     wireframe: BoolProperty(
         name="Use Wireframe",
         description="Show a wireframe in the rxEdit mode",
+        default=True,
+        update=update_wireframe
+        )
+    wireframeobject : PointerProperty(
+        name="Wireframe",
+        type=Object
+        )
+    toggleview: BoolProperty(
+        name="View Selected",
+        description="View the selected object when entering mode",
         default=True
         )
     enabled : BoolProperty(
@@ -96,6 +124,8 @@ class rxState(PropertyGroup):
         name="List of Objects in the Scene",
         description="Objects"
         )
+
+
     
 def register():
     bpy.utils.register_class(rxState)
