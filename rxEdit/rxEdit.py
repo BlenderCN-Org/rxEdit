@@ -91,7 +91,7 @@ class BEGIN_OT_rxEdit(Operator):
         wireframe.hide_select = True
         context.object.users_collection[0].objects.link(wireframe)
         context.scene.rxedit.wireframeobject = wireframe
-        Helper.UpdateWireframeVisibility(context)
+        wireframe.hide_viewport = not context.scene.rxedit.wireframe
 
         #Save Cursor's location and set it to world origin
         cursor_location = context.scene.cursor.location.copy()
