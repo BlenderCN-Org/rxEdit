@@ -156,6 +156,7 @@ class FINISH_OT_rxEdit(Operator):
         wireframe = context.scene.rxedit.wireframeobject
         bpy.ops.object.select_all(action='DESELECT')
         wireframe.hide_select = False
+        wireframe.hide_viewport = False
         wireframe.select_set(True)
         bpy.ops.object.delete()
         context.scene.rxedit.wireframeobject = None
