@@ -46,6 +46,8 @@ class bObject:
 
     def Get(self):
         for obj in self.context.view_layer.objects:
+            if obj.type == 'EMPTY':
+                continue
             if obj.data.name == self.dataname:
                 return obj
         return None

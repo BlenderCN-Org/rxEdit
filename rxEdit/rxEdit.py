@@ -80,6 +80,9 @@ class BEGIN_OT_rxEdit(Operator):
         if ENABLED:
             self.report({'WARNING'}, "Already in rxEdit mode!")
             return {'FINISHED'}
+        if context.object.type != 'MESH':
+            self.report({'ERROR'}, "The selected object is not a mesh")
+            return {'FINISHED'}
 
         main = bObject(context.object, context)
         main.Set()
@@ -99,6 +102,10 @@ class BEGIN_OT_rxEdit(Operator):
 
         objcts = []
         for o in context.view_layer.objects:
+            if o.type == 'EMPTY':
+                o.hide_viewport = True
+                continue
+
             obj = bObject(o, context)
             objcts.append(obj)
             if context.scene.rxedit.visiblechildren and main.IsChild(o):
@@ -134,8 +141,9 @@ class FINISH_OT_rxEdit(Operator):
             
 
         #detecting new created objects
-        
-        new_objects = context.view_layer.objects
+        viewobjects = context.view_layer.objects
+        new_objects = [obj for obj in viewobjects if obj.type != 'EMPTY']
+        empties = [obj for obj in viewobjects if obj.type == 'EMPTY'] # inefficient, might recode later
         for o in OBJECTS:
             try:
                 o.Unhide()
@@ -143,6 +151,8 @@ class FINISH_OT_rxEdit(Operator):
             except :
                 pass #main object probably deleted
             
+        for e in empties:
+            e.hide_viewport = False
 
         #Delete wireframe
         wireframe = context.scene.rxedit.wireframeobject
