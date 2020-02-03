@@ -11,4 +11,4 @@
  
  
 ## Download
- Downloads are in the release section over [here](https://github.com/rxc0/rxEdit/releases)
+ You can download it [here](https://github.com/rxc0/rxEdit/releases/latest/)
