@@ -25,8 +25,9 @@ def register():
 
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
-    km.keymap_items.new(rxEdit.BEGIN_OT_rxEdit.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=False)
-    km.keymap_items.new(rxEdit.FINISH_OT_rxEdit.bl_idname, 'SPACE', 'PRESS', ctrl=False, shift=True)
+    km.keymap_items.new(rxEdit.TOGGLE_OT_rxEdit.bl_idname, 'NUMPAD_SLASH', 'PRESS', ctrl=False, alt=True, shift=False)
+    #km.keymap_items.new(rxEdit.BEGIN_OT_rxEdit.bl_idname, 'SPACE', 'PRESS', ctrl=True, shift=False)
+    #km.keymap_items.new(rxEdit.FINISH_OT_rxEdit.bl_idname, 'SPACE', 'PRESS', ctrl=False, shift=True)
     addon_keymaps.append(km)
 
 def unregister():
