@@ -149,7 +149,7 @@ class FINISH_OT_rxEdit(Operator):
                 o.Unhide()
                 new_objects = [obj for obj in new_objects if obj.data.name != o.dataname]
             except :
-                pass #main object probably deleted
+                pass #object probably deleted
             
         for e in empties:
             e.hide_viewport = False
